@@ -177,9 +177,9 @@ public:
 class OpenType : public Questions, public User
 {
 private:
-	int count;
+	int trueCount;
 public:
-	OpenType() {count = 0;}
+	OpenType() {trueCount = 0;}
 	void displayTest() override {
 		int choice, choice2;
 		readChapterFile();
@@ -209,7 +209,7 @@ public:
 	}
 	void answersCheck() override {
 		const int totalQuestions = 12;
-		double percentage = static_cast<double>(count) / totalQuestions * 100;
+		double percentage = static_cast<double>(trueCount) / totalQuestions * 100;
 		cout << "Percentage of Correct Answers: " << percentage << "%" << endl;
 	}
 	
@@ -219,7 +219,7 @@ public:
 
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
-			int incorrect{};
+			int falseCount{};
 			while (getline(FileQues, question) && getline(FileAnsw, answer)) {
 				cout << "Question: " << question << endl;
 
@@ -237,17 +237,18 @@ public:
 
 				if (userAnswer == answer) {
 					cout << "Correct Answer!" << endl;
-					count++;
+					trueCount++;
 				}
 				else {
 					cout << "Incorrect Answer. Correct Answer: " << answer << endl;
-					incorrect++;
+					falseCount++;
 				}
 				cout << "-------------------" << endl;
 			}
 				cout << "Total Answers :) " << endl;
-				cout << "Correct answers: " << count << endl;
-				cout << "Incorrect answers: " << incorrect << endl;
+				cout << "Correct answers: " << trueCount << endl;
+				cout << "Incorrect answers: " << falseCount << endl;
+				cout << "Mark: " << trueCount << endl;
 				answersCheck();
 			FileQues.close();
 			FileAnsw.close();
