@@ -279,7 +279,6 @@ public:
 		if (fileResult.is_open()) {
 			fileResult << "Results:" << endl;
 			fileResult << "Login: " << getLogin() << endl;
-			
 		}
 	}*/
 };

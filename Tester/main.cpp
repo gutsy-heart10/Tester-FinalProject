@@ -40,7 +40,7 @@ int main() {
                 system("pause");
                 break;
             case 2:
-
+                // statistic
             default:
                 cout << "Incorrect choice!" << endl;
                 break;
