@@ -32,6 +32,7 @@ int main() {
             cout << "1. Take the test." << endl;
             cout << "2. View previous test results." << endl;
             cin >> choice1;
+            system("cls");
             switch (choice1)
             {
             case 1:
@@ -41,13 +42,13 @@ int main() {
             case 2:
 
             default:
-                cout << "Некорректный выбор." << endl;
+                cout << "Incorrect choice!" << endl;
                 break;
             }
             break;
 
         default:
-            cout << "Некорректный выбор. Пожалуйста, выберите 1 или 2." << endl;
+            cout << "Incorrect choice. Please choose 1 or 2." << endl;
             break;
         }
     }
