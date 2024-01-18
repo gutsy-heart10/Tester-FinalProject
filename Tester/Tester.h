@@ -161,7 +161,6 @@ public:
 class Questions
 {
 protected:
-	
 	string question, answer;
 	string chapter;
 	int trueCount;
