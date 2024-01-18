@@ -12,7 +12,6 @@ protected:
 public:
 	Person() : fullName(""), homeAdress(""), phoneNumber("")
 	{}
-
 	virtual void registration() = 0;
 	virtual void regisLogin() = 0;
 	virtual bool isLoginUnique(const string& newLogin) = 0;
@@ -81,6 +80,7 @@ public:
 		}
 		else {
 			cout << "Incorrect login or password!" << endl;
+			return;
 		}
 
 	}
@@ -161,14 +161,15 @@ public:
 class Questions
 {
 protected:
-	string text;
+	
+	string question, answer;
 	string chapter;
-	string answers;
+	int trueCount;
 public:
 	Questions() 
 	{
-		text = "";
-		vector<string> answers{};
+		question = "";
+		answer = "";
 	}
 	virtual void displayTest() = 0;
 	virtual void answersCheck() = 0;
@@ -176,8 +177,6 @@ public:
 };
 class OpenType : public Questions, public User
 {
-private:
-	int trueCount;
 public:
 	OpenType() {trueCount = 0;}
 	void displayTest() override {
@@ -225,6 +224,7 @@ public:
 
 				string userAnswer;
 				cout << "Your Answer: ";
+				cin.ignore();
 				getline(cin, userAnswer);
 
 				for (char& c : userAnswer) {
@@ -272,7 +272,6 @@ public:
 			cout << "Unable to open the file." << endl;
 		}
 	}
-	
 	/*void writeResultTestFile() {
 	
 		ofstream fileResult("resultStudents.txt", ios::out | ios::app);
@@ -281,4 +280,5 @@ public:
 			fileResult << "Login: " << getLogin() << endl;
 		}
 	}*/
+
 };
