@@ -1,0 +1,35 @@
+User information:
+Fullname: Murad Nurmammadli
+Home Adress: Baku
+Phone number: 11111
+Login: Murad
+Password: 1111
+-----------------------------------
+User information:
+Fullname: Murad Nurmammadli
+Home Adress: Baku
+Phone number: 123123
+Login: Murad1
+Password: 12345
+-----------------------------------
+User information:
+Fullname: urad Nur
+Home Adress: Minsk
+Phone number: 11111
+Login: Muradd
+Password: 12345
+-----------------------------------
+User information:
+Fullname: uradd
+Home Adress: 123
+Phone number: 123
+Login: Murads
+Password: 1111
+-----------------------------------
+User information:
+Fullname: 
+Home Adress: 0
+Phone number: 0
+Login: 0
+Password: 0
+-----------------------------------

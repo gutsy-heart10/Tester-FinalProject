@@ -2,6 +2,7 @@
 #include<fstream>
 #include<vector>
 #include<string>
+#include<conio.h>
 using namespace std;
 
 class Person {
@@ -29,9 +30,17 @@ public:
 	}
 };
 
+void mainMenu() {
+	cout << "Welcome!" << endl;
+	cout << "1. Registration." << endl;
+	cout << "2. Autorization." << endl;
+	cout << "0. Exit." << endl;
+	cout << "Select a category: ";
+}
+
 class User : public Person
 {
-private:
+protected:
 	string login;
 	string password;
 public:
@@ -46,10 +55,10 @@ public:
 		cin.ignore();
 		getline(cin, fullName);
 		cout << "Enter your home adress: ";
-		cin >> homeAdress;
+		getline(cin, homeAdress);
 		cout << "Enter your phone number: ";
 		cin >> phoneNumber;
-		writeRegistrationFile();
+		cout << "Registration was successful!!" << endl;
 	}
 
 	void regisLogin() override {
@@ -63,8 +72,9 @@ public:
 		else {
 			cout << "Password: ";
 			cin >> password;
-			cout << "Welcome!" << endl;
+			cout << "Welcome! " << login << endl;
 		}
+		writeRegistrationFile();
 		writeLoginsPassFile();
 	}
 
@@ -77,10 +87,13 @@ public:
 		if (isPasswordCorrect(login, password)) {
 			cout << "Welcome " << login << endl;
 			encrypt(login, password);
+			
 		}
 		else {
 			cout << "Incorrect login or password!" << endl;
-			return;
+			system("pause");
+			system("cls");
+			return mainMenu();
 		}
 
 	}
@@ -97,7 +110,7 @@ public:
 	}
 	
 	bool isLoginUnique(const string& newLogin) override {
-		ifstream file("studentsLogin.txt", ios::in);
+		ifstream file("log.txt", ios::in);
 		if (file.is_open()) {
 			string existingLogin;
 			while (file >> existingLogin) {
@@ -112,8 +125,8 @@ public:
 	}
 
 	bool isPasswordCorrect(const string& login, const string& enteredPass) override {
-		ifstream fileLogin("studentsLogin.txt", ios::in);
-		ifstream filePass("studentsPassword.txt", ios::in);
+		ifstream fileLogin("log.txt", ios::in);
+		ifstream filePass("pass.txt", ios::in);
 		if (fileLogin.is_open() && filePass.is_open()) {
 			string existingLogin;
 			string existingPass;
@@ -131,31 +144,34 @@ public:
 	}
 
 	void writeRegistrationFile() {
-		ofstream file("studentsRegistration.txt", ios::out | ios::app);
+		ofstream file("userData.txt", ios::out | ios::app);
 		if (file.is_open()) {
 			file << "User information:" << endl;
 			file << "Fullname: " << fullName << endl;
 			file << "Home Adress: " << homeAdress << endl;
 			file << "Phone number: " << phoneNumber << endl;
+			file << "Login: " << login << endl;
+			file << "Password: " << password << endl;
 			file << "-----------------------------------" << endl;
 		}
 		file.close();
 	}
 	
 	void writeLoginsPassFile() {
-		ofstream loginFile("studentsLogin.txt", ios::out | ios::app);
-		ofstream passwordFile("studentsPassword.txt", ios::out | ios::app);
+		ofstream log("log.txt",  ios::out | ios::app);
+		ofstream pass("pass.txt", ios::out | ios::app);
 
-		if (loginFile.is_open() && passwordFile.is_open()) {
-			loginFile <<"Login: " << login << endl;
-			passwordFile <<"Password: " << password << endl;
-			loginFile << "-----------------------------------" << endl;
-			passwordFile << "-----------------------------------" << endl;
+		if (log.is_open() && pass.is_open()) {
+			log << login << endl;
+			log << "-----------------------------------" << endl;
+			pass << password << endl;
+			pass << "-----------------------------------" << endl;
 		}
-
-		loginFile.close();
-		passwordFile.close();
+		log.close();
+		pass.close();
 	}
+
+
 };
 
 class Questions
@@ -163,12 +179,18 @@ class Questions
 protected:
 	string question, answer;
 	string chapter;
-	int trueCount;
+	int trueCount, falseCount,
+	currentQuestionIndex, savedTrueCount;
 public:
 	Questions() 
 	{
 		question = "";
 		answer = "";
+		chapter = "";
+		trueCount = 0;
+		falseCount = 0;
+		currentQuestionIndex = 0;
+		savedTrueCount = 0;
 	}
 	virtual void displayTest() = 0;
 	virtual void answersCheck() = 0;
@@ -177,16 +199,38 @@ public:
 class OpenType : public Questions, public User
 {
 public:
-	OpenType() {trueCount = 0;}
+	OpenType() {}
 	void displayTest() override {
-		int choice, choice2;
-		readChapterFile();
-		cin >> choice;
+		int choice{}, choice2{}, menu{};
+		authorization();
+		system("pause");
+		system("cls");
+		if (hasSavedProgress()) {
+			int ch{};
+			cout << "You have saved progress. Do you want to continue? (1 - Yes, 0 - No): ";
+			cin >> ch;
+			if (ch == 1) {
+				currentQuestionIndex = getSavedQuestionIndex();
+				savedTrueCount = getSavedTrueCount();
+			}
+		}
+		cout << "---------------------------" << endl;
+		cout << "1. Take the test." << endl;
+		cout << "2. View previous test results." << endl;
+		cout << "0. Exit your account." << endl;
+		cin >> menu;
+		if (menu == 1) {
+			readChapterFile();
+			cin >> choice;
+			cin.ignore();
+		}
+		else if (menu == 2) { readResultTestFile(); }
+		else if (menu == 0) { return mainMenu(); }
 		switch (choice)
 		{
 		case 1:
 			readQuestionsFile("logicQuestions.txt", "logicAnswers.txt");
-			// writeResult()
+			system("pause");
 			break;
 		case 2:
 			cout << "1. Quiz city names." << endl;
@@ -198,12 +242,14 @@ public:
 			}
 			else if (choice2 == 2) {
 				readQuestionsFile("carsQuizQues.txt", "carsQuizAnsw.txt");
-			}
+			}			
+			system("pause");
 			break;
 		default:
 			cout << "Incorrect selection. Choose 1 or 2 :)" << endl;
 			break;
-		}	
+		}
+		writeResultTestFile();
 	}
 	void answersCheck() override {
 		const int totalQuestions = 12;
@@ -214,27 +260,18 @@ public:
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
 		ifstream FileQues(fileQuestions, ios::in);
 		ifstream FileAnsw(fileAnswers, ios::in);
-
+		User u;
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
 			int falseCount{};
 			while (getline(FileQues, question) && getline(FileAnsw, answer)) {
-				cout << "Question: " << question << endl;
-
+				cout << question << endl;
 				string userAnswer;
+				
 				cout << "Your Answer: ";
-				cin.ignore();
 				getline(cin, userAnswer);
-
-				for (char& c : userAnswer) {
-					c = tolower(c);
-				}
-
-				for (char& c : answer) {
-					c = tolower(c);
-				}
-
-				if (userAnswer == answer) {
+				
+				if (_strcmpi(userAnswer.c_str(), answer.c_str()) == 0) {
 					cout << "Correct Answer!" << endl;
 					trueCount++;
 				}
@@ -249,18 +286,18 @@ public:
 				cout << "Incorrect answers: " << falseCount << endl;
 				cout << "Mark: " << trueCount << endl;
 				answersCheck();
+				writeResultTestFile();
 			FileQues.close();
 			FileAnsw.close();
 		}
 		else {
 			cout << "Unable to open the files." << endl;
 		}
+		SaveProgress();
 	}
 	void readChapterFile() {
 		ifstream fileChapter("chapters.txt", ios::in);
-		if (fileChapter.is_open()) {
-			string chapter;
-			
+		if (fileChapter.is_open()) {			
 			cout << "Select a section:" << endl;
 			while (getline(fileChapter, chapter)) {
 				cout << chapter << endl;
@@ -271,13 +308,109 @@ public:
 			cout << "Unable to open the file." << endl;
 		}
 	}
-	/*void writeResultTestFile() {
-	
-		ofstream fileResult("resultStudents.txt", ios::out | ios::app);
+
+	void SaveProgress() {
+		ofstream progressFile("progress.txt", ios::out | ios::app);
+		if (progressFile.is_open()) {
+			progressFile << currentQuestionIndex << endl;
+			progressFile << savedTrueCount << endl;
+		}
+		progressFile.close();
+	}
+
+	bool hasSavedProgress() {
+		ifstream progressFile("progress.txt", ios::in);
+		return progressFile.good();
+	}
+
+	int getSavedQuestionIndex() {
+		ifstream progressFile("progress.txt", ios::in);
+		int questionIndex;
+		progressFile >> questionIndex;
+		progressFile.close();
+		return questionIndex;
+	}
+	int getSavedTrueCount() {
+		ifstream progressFile("progress.txt", ios::in);
+		int trueCount;
+		progressFile >> trueCount;
+		progressFile.close();
+		return trueCount;
+	}
+
+	void writeResultTestFile() {
+		ofstream fileResult("resultStudents.txt", ios::out | ios::trunc); // Заменено ios::app на ios::trunc
 		if (fileResult.is_open()) {
 			fileResult << "Results:" << endl;
-			fileResult << "Login: " << getLogin() << endl;
+			fileResult << "Login: " << login << endl;
+			fileResult << "Test: " << chapter << endl;
+			fileResult << "Mark: " << trueCount << endl;
+			fileResult.close(); 
+			cout << "Results have been successfully written to the file." << endl;
 		}
-	}*/
+		else {
+			cout << "Error: Unable to open the file for writing." << endl;
+		}
+	}
+
+	void readResultTestFile() {
+		ifstream fileResult("resultStudents.txt", ios::in);
+		if (fileResult.is_open()) {
+			cout << "Information: " << login << endl; 
+			string showResult;
+			while (getline(fileResult, showResult)) {
+				cout << showResult << endl; 
+			}
+			fileResult.close();
+		}
+		else {
+			cout << "Error: Unable to open the file." << endl;
+			return; 
+		}
+	}
+
+
+	void testMenu() {
+		cout << "---------------------------" << endl;
+		cout << "1. Take the test." << endl;
+		cout << "2. View previous test results." << endl;
+		cout << "0. Exit your account." << endl;
+		displayTest();
+	}
+
 
 };
+
+
+
+void MenuMain(OpenType& t) {
+	while (true) {
+		mainMenu();
+
+		int choice;
+		cin >> choice;
+		cin.ignore();
+
+		switch (choice) {
+		case 1:
+			t.registration();
+			system("pause");
+			system("cls");
+			t.regisLogin();
+			system("pause");
+			system("cls");
+			break;
+		case 2:
+			
+			t.displayTest();
+			break;
+		case 0:
+			cout << "Goodbye!" << endl;
+			exit(1);
+		default:
+			cout << "Invalid choice. Please enter a valid option." << endl;
+			break;
+		}
+
+	}
+}
