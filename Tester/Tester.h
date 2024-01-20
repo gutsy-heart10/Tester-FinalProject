@@ -28,6 +28,8 @@ public:
 	virtual string getPhonenumber() {
 		return phoneNumber;
 	}
+	virtual ~Person() = 0 {};
+	
 };
 
 void mainMenu() {
@@ -171,7 +173,8 @@ public:
 		pass.close();
 	}
 
-
+	~User()
+	{}
 };
 
 class Questions
@@ -194,6 +197,7 @@ public:
 	}
 	virtual void displayTest() = 0;
 	virtual void answersCheck() = 0;
+	virtual ~Questions() = 0 {};
 	
 };
 class OpenType : public Questions, public User
@@ -235,6 +239,7 @@ public:
 			}
 			else if (choice2 == 2) {
 				readQuestionsFile("carsQuizQues.txt", "carsQuizAnsw.txt");
+				break;
 			}			
 			system("pause");
 			break;

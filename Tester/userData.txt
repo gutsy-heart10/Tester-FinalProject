@@ -40,3 +40,10 @@ Phone number: 4747
 Login: Murado
 Password: 1111
 -----------------------------------
+User information:
+Fullname: utsy
+Home Adress: 12
+Phone number: 12
+Login: Gutsy33
+Password: 12345
+-----------------------------------
