@@ -205,7 +205,7 @@ public:
 		authorization();
 		system("pause");
 		system("cls");
-		if (hasSavedProgress()) {
+		/*if (hasSavedProgress()) {
 			int ch{};
 			cout << "You have saved progress. Do you want to continue? (1 - Yes, 0 - No): ";
 			cin >> ch;
@@ -213,7 +213,7 @@ public:
 				currentQuestionIndex = getSavedQuestionIndex();
 				savedTrueCount = getSavedTrueCount();
 			}
-		}
+		}*/
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
 		cout << "2. View previous test results." << endl;
@@ -237,6 +237,7 @@ public:
 			cout << "2. Quiz car brand names." << endl;
 			cout << "Select category :)";
 			cin >> choice2;
+			cin.ignore();
 			if (choice2 == 1) {
 				readQuestionsFile("citiesQuizQues.txt","citiesQuizAnsw.txt");
 			}
@@ -264,12 +265,13 @@ public:
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
 			int falseCount{};
-			while (getline(FileQues, question) && getline(FileAnsw, answer)) {
+			for (; getline(FileQues, question) && getline(FileAnsw, answer);) {
 				cout << question << endl;
 				string userAnswer;
 				
 				cout << "Your Answer: ";
 				getline(cin, userAnswer);
+				
 				
 				if (_strcmpi(userAnswer.c_str(), answer.c_str()) == 0) {
 					cout << "Correct Answer!" << endl;
@@ -293,7 +295,7 @@ public:
 		else {
 			cout << "Unable to open the files." << endl;
 		}
-		SaveProgress();
+		//SaveProgress();
 	}
 	void readChapterFile() {
 		ifstream fileChapter("chapters.txt", ios::in);
@@ -309,7 +311,7 @@ public:
 		}
 	}
 
-	void SaveProgress() {
+	/*void SaveProgress() {
 		ofstream progressFile("progress.txt", ios::out | ios::app);
 		if (progressFile.is_open()) {
 			progressFile << currentQuestionIndex << endl;
@@ -337,16 +339,15 @@ public:
 		progressFile.close();
 		return trueCount;
 	}
-
+	*/
 	void writeResultTestFile() {
-		ofstream fileResult("resultStudents.txt", ios::out | ios::trunc); // Заменено ios::app на ios::trunc
+		ofstream fileResult("resultStudents.txt", ios::out | ios::app); 
 		if (fileResult.is_open()) {
 			fileResult << "Results:" << endl;
 			fileResult << "Login: " << login << endl;
 			fileResult << "Test: " << chapter << endl;
 			fileResult << "Mark: " << trueCount << endl;
 			fileResult.close(); 
-			cout << "Results have been successfully written to the file." << endl;
 		}
 		else {
 			cout << "Error: Unable to open the file for writing." << endl;
