@@ -205,15 +205,7 @@ public:
 		authorization();
 		system("pause");
 		system("cls");
-		/*if (hasSavedProgress()) {
-			int ch{};
-			cout << "You have saved progress. Do you want to continue? (1 - Yes, 0 - No): ";
-			cin >> ch;
-			if (ch == 1) {
-				currentQuestionIndex = getSavedQuestionIndex();
-				savedTrueCount = getSavedTrueCount();
-			}
-		}*/
+		
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
 		cout << "2. View previous test results." << endl;
@@ -295,7 +287,7 @@ public:
 		else {
 			cout << "Unable to open the files." << endl;
 		}
-		//SaveProgress();
+		
 	}
 	void readChapterFile() {
 		ifstream fileChapter("chapters.txt", ios::in);
@@ -311,35 +303,6 @@ public:
 		}
 	}
 
-	/*void SaveProgress() {
-		ofstream progressFile("progress.txt", ios::out | ios::app);
-		if (progressFile.is_open()) {
-			progressFile << currentQuestionIndex << endl;
-			progressFile << savedTrueCount << endl;
-		}
-		progressFile.close();
-	}
-
-	bool hasSavedProgress() {
-		ifstream progressFile("progress.txt", ios::in);
-		return progressFile.good();
-	}
-
-	int getSavedQuestionIndex() {
-		ifstream progressFile("progress.txt", ios::in);
-		int questionIndex;
-		progressFile >> questionIndex;
-		progressFile.close();
-		return questionIndex;
-	}
-	int getSavedTrueCount() {
-		ifstream progressFile("progress.txt", ios::in);
-		int trueCount;
-		progressFile >> trueCount;
-		progressFile.close();
-		return trueCount;
-	}
-	*/
 	void writeResultTestFile() {
 		ofstream fileResult("resultStudents.txt", ios::out | ios::app); 
 		if (fileResult.is_open()) {

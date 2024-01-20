@@ -33,3 +33,10 @@ Phone number: 0
 Login: 0
 Password: 0
 -----------------------------------
+User information:
+Fullname: urado
+Home Adress: Morioh
+Phone number: 4747
+Login: Murado
+Password: 1111
+-----------------------------------
