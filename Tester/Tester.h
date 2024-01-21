@@ -294,7 +294,6 @@ public:
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
 		ifstream FileQues(root + fileQuestions, ios::in);
 		ifstream FileAnsw(root + fileAnswers, ios::in);
-		User u;
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
 			int falseCount{};
