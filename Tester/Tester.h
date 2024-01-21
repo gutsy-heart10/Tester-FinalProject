@@ -325,18 +325,24 @@ public:
 	void readResultTestFile() {
 		ifstream fileResult("resultStudents.txt", ios::in);
 		if (fileResult.is_open()) {
-			cout << "Information: " << login << endl; 
-			string showResult;
-			while (getline(fileResult, showResult)) {
-				cout << showResult << endl; 
+			string line;
+			while (getline(fileResult, line)) {
+				if (line.find("Login: " + login) != string::npos) {
+					cout << line << endl;  
+					while (getline(fileResult, line) && line != "") {
+						cout << line << endl;  
+					}
+					break;  
+				}
 			}
 			fileResult.close();
 		}
 		else {
 			cout << "Error: Unable to open the file." << endl;
-			return; 
+			return;
 		}
 	}
+
 
 
 	void testMenu() {

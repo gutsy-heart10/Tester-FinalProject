@@ -1,52 +1,24 @@
 Results:
-Login: Nvsbet
-Test: 
-Mark: 0
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 2
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 2
-Results:
-Login: Nvsbep
-Test: 2.Quiz
-Mark: 4
-Results:
-Login: Nvsbet
-Test: 
-Mark: 0
-Results:
-Login: Nvsbet
-Test: 
-Mark: 0
-Results:
-Login: Nvsbet
-Test: 
-Mark: 0
-Results:
-Login: Nvsbee
-Test: 
-Mark: 0
-Results:
-Login: Nvsbet
-Test: 
-Mark: 0
-Results:
 Login: Hvutz44
-Test: 
-Mark: 0
+Test: 2.Quiz
+Mark: 11
 Results:
 Login: Hvutz44
 Test: 2.Quiz
-Mark: 4
+Mark: 11
+Results:
+Login: Nvsbet
+Test: 2.Quiz
+Mark: 12
+Results:
+Login: Nvsbet
+Test: 2.Quiz
+Mark: 12
+Results:
+Login: Nvsbet
+Test: 2.Quiz
+Mark: 12
 Results:
 Login: Hvutz44
 Test: 2.Quiz
-Mark: 4
-Results:
-Login: Hvutz44
-Test: 2.Quiz
-Mark: 4
+Mark: 12
