@@ -5,6 +5,8 @@
 #include<conio.h>
 using namespace std;
 
+string root = "../files/";
+
 class Person {
 protected:
 	string fullName;
@@ -112,7 +114,7 @@ public:
 	}
 	
 	bool isLoginUnique(const string& newLogin) override {
-		ifstream file("log.txt", ios::in);
+		ifstream file(root+"log.txt", ios::in);
 		if (file.is_open()) {
 			string existingLogin;
 			while (file >> existingLogin) {
@@ -127,8 +129,8 @@ public:
 	}
 
 	bool isPasswordCorrect(const string& login, const string& enteredPass) override {
-		ifstream fileLogin("log.txt", ios::in);
-		ifstream filePass("pass.txt", ios::in);
+		ifstream fileLogin(root + "log.txt", ios::in);
+		ifstream filePass(root + "pass.txt", ios::in);
 		if (fileLogin.is_open() && filePass.is_open()) {
 			string existingLogin;
 			string existingPass;
@@ -146,7 +148,7 @@ public:
 	}
 
 	void writeRegistrationFile() {
-		ofstream file("userData.txt", ios::out | ios::app);
+		ofstream file(root + "userData.txt", ios::out | ios::app);
 		if (file.is_open()) {
 			file << "User information:" << endl;
 			file << "Fullname: " << fullName << endl;
@@ -160,8 +162,8 @@ public:
 	}
 	
 	void writeLoginsPassFile() {
-		ofstream log("log.txt",  ios::out | ios::app);
-		ofstream pass("pass.txt", ios::out | ios::app);
+		ofstream log(root + "log.txt",  ios::out | ios::app);
+		ofstream pass(root + "pass.txt", ios::out | ios::app);
 
 		if (log.is_open() && pass.is_open()) {
 			log << login << endl;
@@ -203,6 +205,7 @@ public:
 class OpenType : public Questions, public User
 {
 public:
+	string root = "../files/";
 	OpenType() {}
 	void displayTest() override {
 		int choice{}, choice2{}, menu{};
@@ -256,8 +259,8 @@ public:
 	}
 	
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
-		ifstream FileQues(fileQuestions, ios::in);
-		ifstream FileAnsw(fileAnswers, ios::in);
+		ifstream FileQues(root + fileQuestions, ios::in);
+		ifstream FileAnsw(root + fileAnswers, ios::in);
 		User u;
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
@@ -295,7 +298,7 @@ public:
 		
 	}
 	void readChapterFile() {
-		ifstream fileChapter("chapters.txt", ios::in);
+		ifstream fileChapter(root + "chapters.txt", ios::in);
 		if (fileChapter.is_open()) {			
 			cout << "Select a section:" << endl;
 			while (getline(fileChapter, chapter)) {
@@ -309,7 +312,7 @@ public:
 	}
 
 	void writeResultTestFile() {
-		ofstream fileResult("resultStudents.txt", ios::out | ios::app); 
+		ofstream fileResult(root+"resultStudents.txt", ios::out | ios::app); 
 		if (fileResult.is_open()) {
 			fileResult << "Results:" << endl;
 			fileResult << "Login: " << login << endl;
@@ -323,7 +326,7 @@ public:
 	}
 
 	void readResultTestFile() {
-		ifstream fileResult("resultStudents.txt", ios::in);
+		ifstream fileResult(root + "resultStudents.txt", ios::in);
 		if (fileResult.is_open()) {
 			string line;
 			while (getline(fileResult, line)) {
