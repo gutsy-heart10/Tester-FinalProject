@@ -418,8 +418,6 @@ public:
 	}
 };
 
-
-
 void MenuMain(OpenType& t) {
 	while (true) {
 		mainMenu();
