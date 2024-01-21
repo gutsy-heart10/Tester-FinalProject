@@ -47,3 +47,10 @@ Phone number: 12
 Login: Gutsy33
 Password: 12345
 -----------------------------------
+User information:
+Fullname: Murado
+Home Adress: 11111
+Phone number: 11212
+Login: Muradoo
+Password: 11111
+-----------------------------------

@@ -202,17 +202,25 @@ public:
 	virtual ~Questions() = 0 {};
 	
 };
-class OpenType : public Questions, public User
-{
+class OpenType : public Questions, public User {
+private:
+	// ƒобавим приватные переменные дл€ хранени€ информации о текущем прогрессе
+	int currentQuestionIndex;
+	int savedTrueCount;
+	bool interruptTest;
+
+
 public:
 	string root = "../files/";
-	OpenType() {}
+
+	OpenType() : currentQuestionIndex(0), savedTrueCount(0), interruptTest(false){}
+
 	void displayTest() override {
 		int choice{}, choice2{}, menu{};
 		authorization();
 		system("pause");
 		system("cls");
-		
+
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
 		cout << "2. View previous test results." << endl;
@@ -223,10 +231,14 @@ public:
 			cin >> choice;
 			cin.ignore();
 		}
-		else if (menu == 2) { readResultTestFile(); }
-		else if (menu == 0) { return mainMenu(); }
-		switch (choice)
-		{
+		else if (menu == 2) {
+			readResultTestFile();
+		}
+		else if (menu == 0) {
+			return mainMenu();
+		}
+
+		switch (choice) {
 		case 1:
 			readQuestionsFile("logicQuestions.txt", "logicAnswers.txt");
 			system("pause");
@@ -238,12 +250,12 @@ public:
 			cin >> choice2;
 			cin.ignore();
 			if (choice2 == 1) {
-				readQuestionsFile("citiesQuizQues.txt","citiesQuizAnsw.txt");
+				readQuestionsFile("citiesQuizQues.txt", "citiesQuizAnsw.txt");
 			}
 			else if (choice2 == 2) {
 				readQuestionsFile("carsQuizQues.txt", "carsQuizAnsw.txt");
 				break;
-			}			
+			}
 			system("pause");
 			break;
 		default:
@@ -251,13 +263,34 @@ public:
 			break;
 		}
 		writeResultTestFile();
+		
 	}
+
 	void answersCheck() override {
 		const int totalQuestions = 12;
 		double percentage = static_cast<double>(trueCount) / totalQuestions * 100;
 		cout << "Percentage of Correct Answers: " << percentage << "%" << endl;
 	}
-	
+
+	void askToInterruptTest() {
+		char interruptChoice;
+		cout << "Do you want to interrupt the test? (y/n): ";
+		cin >> interruptChoice;
+		if (interruptChoice == 'y' || interruptChoice == 'Y') {
+			interruptTest = true;
+			writeInterruptTest();
+			return mainMenu();
+		}
+		else {
+			interruptTest = false;
+		}
+	}
+
+	bool hasSavedProgress() {
+		ifstream progressFile(root + "progress.txt", ios::in);
+		return progressFile.good();
+	}
+
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
 		ifstream FileQues(root + fileQuestions, ios::in);
 		ifstream FileAnsw(root + fileAnswers, ios::in);
@@ -268,11 +301,10 @@ public:
 			for (; getline(FileQues, question) && getline(FileAnsw, answer);) {
 				cout << question << endl;
 				string userAnswer;
-				
+
 				cout << "Your Answer: ";
 				getline(cin, userAnswer);
-				
-				
+
 				if (_strcmpi(userAnswer.c_str(), answer.c_str()) == 0) {
 					cout << "Correct Answer!" << endl;
 					trueCount++;
@@ -282,24 +314,26 @@ public:
 					falseCount++;
 				}
 				cout << "-------------------" << endl;
+				askToInterruptTest();
 			}
-				cout << "Total Answers :) " << endl;
-				cout << "Correct answers: " << trueCount << endl;
-				cout << "Incorrect answers: " << falseCount << endl;
-				cout << "Mark: " << trueCount << endl;
-				answersCheck();
-				writeResultTestFile();
+			cout << "Total Answers :) " << endl;
+			cout << "Correct answers: " << trueCount << endl;
+			cout << "Incorrect answers: " << falseCount << endl;
+			cout << "Mark: " << trueCount << endl;
+			answersCheck();
+			writeResultTestFile();
 			FileQues.close();
 			FileAnsw.close();
 		}
 		else {
 			cout << "Unable to open the files." << endl;
 		}
-		
+
 	}
+
 	void readChapterFile() {
 		ifstream fileChapter(root + "chapters.txt", ios::in);
-		if (fileChapter.is_open()) {			
+		if (fileChapter.is_open()) {
 			cout << "Select a section:" << endl;
 			while (getline(fileChapter, chapter)) {
 				cout << chapter << endl;
@@ -312,13 +346,13 @@ public:
 	}
 
 	void writeResultTestFile() {
-		ofstream fileResult(root+"resultStudents.txt", ios::out | ios::app); 
+		ofstream fileResult(root + "resultStudents.txt", ios::out | ios::app);
 		if (fileResult.is_open()) {
 			fileResult << "Results:" << endl;
 			fileResult << "Login: " << login << endl;
 			fileResult << "Test: " << chapter << endl;
 			fileResult << "Mark: " << trueCount << endl;
-			fileResult.close(); 
+			fileResult.close();
 		}
 		else {
 			cout << "Error: Unable to open the file for writing." << endl;
@@ -331,11 +365,11 @@ public:
 			string line;
 			while (getline(fileResult, line)) {
 				if (line.find("Login: " + login) != string::npos) {
-					cout << line << endl;  
+					cout << line << endl;
 					while (getline(fileResult, line) && line != "") {
-						cout << line << endl;  
+						cout << line << endl;
 					}
-					break;  
+					break;
 				}
 			}
 			fileResult.close();
@@ -346,17 +380,42 @@ public:
 		}
 	}
 
+	void writeInterruptTest() {
+		ofstream file(root + "progress.txt", ios::out | ios::trunc);
+		if (file.is_open()) {
+			file << "CurrentQuestionIndex: " << currentQuestionIndex << endl;
+			file << "SavedTrueCount: " << savedTrueCount << endl;
+			file.close();
+			cout << "Test progress saved successfully." << endl;
+		}
+		else {
+			cout << "Error: Unable to open the file for writing." << endl;
+		}
+	}
 
+	void readInterruptTest() {
+		ifstream file(root + "progress.txt", ios::in);
+		if (file.is_open()) {
+			file >> currentQuestionIndex;
+			file >> savedTrueCount;
+			file.close();
+			cout << "Test progress loaded successfully." << endl;
+		}
+		else {
+			cout << "Error: Unable to open the file for reading." << endl;
+		}
+	}
 
 	void testMenu() {
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
 		cout << "2. View previous test results." << endl;
 		cout << "0. Exit your account." << endl;
+		if (!interruptTest && hasSavedProgress()) {
+			readInterruptTest();
+		}
 		displayTest();
 	}
-
-
 };
 
 
