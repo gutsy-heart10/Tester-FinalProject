@@ -97,7 +97,7 @@ public:
 			cout << "Incorrect login or password!" << endl;
 			system("pause");
 			system("cls");
-			return mainMenu();
+			return authorization();
 		}
 
 	}
@@ -108,6 +108,7 @@ public:
 		}
 		for (char& ch : pass) {
 			ch = static_cast<char>(ch + 1);
+			ch = '*';
 		}
 		cout << "Encrypt login: " << log << endl;
 		cout << "Encrypt password: " << pass << endl;
@@ -204,14 +205,11 @@ public:
 };
 class OpenType : public Questions, public User {
 private:
-	// ƒобавим приватные переменные дл€ хранени€ информации о текущем прогрессе
 	int currentQuestionIndex;
 	int savedTrueCount;
 	bool interruptTest;
-
-
-public:
 	string root = "../files/";
+public:
 
 	OpenType() : currentQuestionIndex(0), savedTrueCount(0), interruptTest(false){}
 
@@ -312,8 +310,8 @@ public:
 					cout << "Incorrect Answer. Correct Answer: " << answer << endl;
 					falseCount++;
 				}
-				cout << "-------------------" << endl;
 				askToInterruptTest();
+				cout << "-------------------" << endl;
 			}
 			cout << "Total Answers :) " << endl;
 			cout << "Correct answers: " << trueCount << endl;
@@ -380,9 +378,9 @@ public:
 	}
 
 	void writeInterruptTest() {
-		ofstream file(root + "progress.txt", ios::out | ios::trunc);
+		ofstream file(root + "interrupt.dat", ios::out | ios::trunc);
 		if (file.is_open()) {
-			file << "CurrentQuestionIndex: " << currentQuestionIndex << endl;
+			file << "CurrentQuestionIndex: " << trueCount << endl; // !!!!!
 			file << "SavedTrueCount: " << savedTrueCount << endl;
 			file.close();
 			cout << "Test progress saved successfully." << endl;
@@ -393,9 +391,9 @@ public:
 	}
 
 	void readInterruptTest() {
-		ifstream file(root + "progress.txt", ios::in);
+		ifstream file(root + "interrupt.dat", ios::in);
 		if (file.is_open()) {
-			file >> currentQuestionIndex;
+			file >> trueCount;
 			file >> savedTrueCount;
 			file.close();
 			cout << "Test progress loaded successfully." << endl;
