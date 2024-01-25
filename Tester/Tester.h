@@ -2,6 +2,7 @@
 #include<fstream>
 #include<vector>
 #include<string>
+#include <sstream>
 #include<conio.h>
 using namespace std;
 
@@ -79,7 +80,6 @@ public:
 			cout << "Welcome! " << login << endl;
 		}
 		writeRegistrationFile();
-		writeLoginsPassFile();
 	}
 
 	void authorization() override {
@@ -88,19 +88,62 @@ public:
 		cin >> login;
 		cout << "Password: ";
 		cin >> password;
+
 		if (isPasswordCorrect(login, password)) {
 			cout << "Welcome " << login << endl;
 			encrypt(login, password);
-			
 		}
 		else {
 			cout << "Incorrect login or password!" << endl;
 			system("pause");
 			system("cls");
-			return authorization();
+			return authorization(); 
+		}
+	}
+
+	bool isLoginUnique(const string& newLogin) override {
+		ifstream file(root + "userData.txt", ios::in);
+
+		if (file.is_open()) {
+			string line;
+
+			while (getline(file, line)) {
+				istringstream iss(line);
+				string token;
+
+				if (iss >> token) {
+					if (token == "Login:") {
+						string log;
+						if (iss >> log) {
+							if (log == newLogin) {
+								file.close();
+								return false;  
+							}
+						}
+					}
+				}
+			}
+
+			file.close();
 		}
 
+		return true;  
 	}
+	bool isPasswordCorrect(const string& enteredLogin, const string& enteredPass) override {
+		ifstream file(root + "userData.txt", ios::in);
+		if (file.is_open()) {
+			string login, password;
+			while (file >> login >> password) {
+				if (login == enteredLogin && password == enteredPass) {
+					file.close();
+					return true;
+				}
+			}
+			file.close();
+		}
+		return false;
+	}
+
 
 	void encrypt(string& log, string pass) override {
 		for (char& ch : login) {
@@ -113,69 +156,20 @@ public:
 		cout << "Encrypt login: " << log << endl;
 		cout << "Encrypt password: " << pass << endl;
 	}
-	
-	bool isLoginUnique(const string& newLogin) override {
-		ifstream file(root+"log.txt", ios::in);
-		if (file.is_open()) {
-			string existingLogin;
-			while (file >> existingLogin) {
-				if (existingLogin == newLogin) {
-					file.close();
-					return false;
-				}
-			}
-			file.close();
-		}
-		return true;
-	}
-
-	bool isPasswordCorrect(const string& login, const string& enteredPass) override {
-		ifstream fileLogin(root + "log.txt", ios::in);
-		ifstream filePass(root + "pass.txt", ios::in);
-		if (fileLogin.is_open() && filePass.is_open()) {
-			string existingLogin;
-			string existingPass;
-			while (fileLogin >> existingLogin && filePass >> existingPass) {
-				if (login == existingLogin && enteredPass == existingPass) {
-					fileLogin.close();
-					filePass.close();
-					return true;
-				}
-			}
-			fileLogin.close();
-			filePass.close();
-		}
-		return false;
-	}
 
 	void writeRegistrationFile() {
 		ofstream file(root + "userData.txt", ios::out | ios::app);
 		if (file.is_open()) {
-			file << "User information:" << endl;
-			file << "Fullname: " << fullName << endl;
-			file << "Home Adress: " << homeAdress << endl;
-			file << "Phone number: " << phoneNumber << endl;
-			file << "Login: " << login << endl;
-			file << "Password: " << password << endl;
+			file <<login << endl;
+			file << password << endl;
+			file <<fullName << endl;
+			file << homeAdress << endl;
+			file << phoneNumber << endl;
 			file << "-----------------------------------" << endl;
 		}
 		file.close();
 	}
 	
-	void writeLoginsPassFile() {
-		ofstream log(root + "log.txt",  ios::out | ios::app);
-		ofstream pass(root + "pass.txt", ios::out | ios::app);
-
-		if (log.is_open() && pass.is_open()) {
-			log << login << endl;
-			log << "-----------------------------------" << endl;
-			pass << password << endl;
-			pass << "-----------------------------------" << endl;
-		}
-		log.close();
-		pass.close();
-	}
-
 	~User()
 	{}
 };
@@ -205,13 +199,12 @@ public:
 };
 class OpenType : public Questions, public User {
 private:
-	int currentQuestionIndex;
+	string currentQuestionIndex;
 	int savedTrueCount;
 	bool interruptTest;
 	string root = "../files/";
 public:
-
-	OpenType() : currentQuestionIndex(0), savedTrueCount(0), interruptTest(false){}
+	OpenType() : currentQuestionIndex(""), savedTrueCount(0), interruptTest(false) {}
 
 	void displayTest() override {
 		int choice{}, choice2{}, menu{};
@@ -277,6 +270,7 @@ public:
 		if (interruptChoice == 'y' || interruptChoice == 'Y') {
 			interruptTest = true;
 			writeInterruptTest();
+			hasSavedProgress();
 			return mainMenu();
 		}
 		else {
@@ -296,6 +290,7 @@ public:
 			string question, answer;
 			int falseCount{};
 			for (; getline(FileQues, question) && getline(FileAnsw, answer);) {
+				
 				cout << question << endl;
 				string userAnswer;
 
@@ -304,14 +299,16 @@ public:
 
 				if (_strcmpi(userAnswer.c_str(), answer.c_str()) == 0) {
 					cout << "Correct Answer!" << endl;
+					savedTrueCount++;
 					trueCount++;
 				}
 				else {
 					cout << "Incorrect Answer. Correct Answer: " << answer << endl;
 					falseCount++;
 				}
-				askToInterruptTest();
+				
 				cout << "-------------------" << endl;
+				askToInterruptTest();
 			}
 			cout << "Total Answers :) " << endl;
 			cout << "Correct answers: " << trueCount << endl;
@@ -380,7 +377,7 @@ public:
 	void writeInterruptTest() {
 		ofstream file(root + "interrupt.dat", ios::out | ios::trunc);
 		if (file.is_open()) {
-			file << "CurrentQuestionIndex: " << trueCount << endl; // !!!!!
+			file << "CurrentQuestion: " << trueCount << endl; // !!!!!
 			file << "SavedTrueCount: " << savedTrueCount << endl;
 			file.close();
 			cout << "Test progress saved successfully." << endl;
@@ -390,16 +387,18 @@ public:
 		}
 	}
 
-	void readInterruptTest() {
+	bool readInterruptTest() {
 		ifstream file(root + "interrupt.dat", ios::in);
 		if (file.is_open()) {
 			file >> trueCount;
 			file >> savedTrueCount;
 			file.close();
 			cout << "Test progress loaded successfully." << endl;
+			return true;
 		}
 		else {
 			cout << "Error: Unable to open the file for reading." << endl;
+			return false;
 		}
 	}
 
