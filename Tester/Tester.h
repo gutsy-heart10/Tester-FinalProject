@@ -250,7 +250,7 @@ public:
 		cout << "Percentage of Correct Answers: " << percentage << "%" << endl;
 	}
 
-	void askToInterruptTest() {
+	bool askToInterruptTest() {
 		char interruptChoice;
 		cout << "Do you want to interrupt the test? (y/n): ";
 		cin >> interruptChoice;
@@ -258,10 +258,11 @@ public:
 			interruptTest = true;
 			writeInterruptTest();
 			hasSavedProgress();
-			return mainMenu();
+			return true;
 		}
 		else {
 			interruptTest = false;
+			return false;
 		}
 	}
 
@@ -273,6 +274,7 @@ public:
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
 		ifstream FileQues(root + fileQuestions, ios::in);
 		ifstream FileAnsw(root + fileAnswers, ios::in);
+		bool inter{};
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
 			int falseCount{};
@@ -295,8 +297,10 @@ public:
 				}
 				
 				cout << "-------------------" << endl;
-				askToInterruptTest();
+				inter = askToInterruptTest();
+				if (inter) break;
 			}
+			if (inter) return mainMenu();
 			cout << "Total Answers :) " << endl;
 			cout << "Correct answers: " << trueCount << endl;
 			cout << "Incorrect answers: " << falseCount << endl;
@@ -361,7 +365,7 @@ public:
 		}
 	}
 
-	void writeInterruptTest() {
+	bool writeInterruptTest() {
 		ofstream file(root + "interrupt.dat", ios::out | ios::trunc);
 		if (file.is_open()) {
 			file << "CurrentQuestion: " << trueCount << endl; // !!!!!
@@ -372,6 +376,7 @@ public:
 		else {
 			cout << "Error: Unable to open the file for writing." << endl;
 		}
+		return true;
 	}
 
 	bool readInterruptTest() {
