@@ -103,30 +103,17 @@ public:
 
 	bool isLoginUnique(const string& newLogin) override {
 		ifstream file(root + "userData.txt", ios::in);
-
 		if (file.is_open()) {
-			string line;
-
-			while (getline(file, line)) {
-				istringstream iss(line);
-				string token;
-
-				if (iss >> token) {
-					if (token == "Login:") {
-						string log;
-						if (iss >> log) {
-							if (log == newLogin) {
-								file.close();
-								return false;  
-							}
-						}
-					}
+			string log,pass;
+			while (file >> log >> pass) {
+				if (log == newLogin) {
+					file.close();
+					return false;
 				}
 			}
 
 			file.close();
 		}
-
 		return true;  
 	}
 	bool isPasswordCorrect(const string& enteredLogin, const string& enteredPass) override {
