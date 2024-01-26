@@ -1,12 +1,12 @@
-A) 4	B) 6	C) 8	D) 10
-A) 5	B) 10	C) 15	D) 20
-A) The truth	B) False C) Undefined	D) True or false
-A) 2	B) 4	C) 8	D) 16
-A) Selection method	B) Substitution method	C) Induction method	D) Exclusion method
-A) 0		B) 1		C) True		D) False
-A) 2		B) 3		C) 4		D) 5
-A) The space of elementary events    B) Random event	C) Probability	D) Random variable
-A) 11!		B) 11! / 2	C) 11! / 2!	D) 11! / (2! * 2!)
-A) S_n = n * (a_1 + a_n)   B) S_n = n/2 * (a_1 + a_n)	C) S_n = n * a_1 + a_n	 D) S_n = (a_1 + a_n) / 2
-A) A graph without cycles,B) A graph with cycles,C) A connected graph passing through each edge exactly once,D) A directed graph
-A) n!	B) 2^n	C) n^2	D) n^n
+C
+C
+B
+C
+C
+B
+B
+A
+D
+B
+C
+B

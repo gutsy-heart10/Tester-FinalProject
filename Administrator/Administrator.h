@@ -28,22 +28,15 @@ public:
 	Admin() {}
 	// osushitvlayet vxod libo registraciyu
 	void AdminMenu() {
-		char choice[5];
+		CheckAdminAccount();
 		registration();
-		cout << "If you want to change your login or password (y/n) ?";
-		cin >> choice;
-		if (choice == "Y" || choice == "y") {
-			ChangeLogPass();
-		}
-		delete[] choice;
 	};
 
 	void registration() override {
 		cout << "Enter your full name: ";
-		getline(cin, fullName);
-		cin.ignore();
+		getline(cin >> ws, fullName);
 		cout << "Enter your email: ";
-		getline(cin, email);
+		getline(cin >> ws, email);
 		cout << "Enter your login: ";
 		cin >> login;
 		cout << "Enter your password: ";
@@ -53,18 +46,33 @@ public:
 		authorization();
 	}
 	void authorization() override {
+		char choice{};
 		cout << "Login: ";
-		getline(cin, login);
-		cin.ignore();
+		getline(cin >> ws, login);
+		
 		cout << "Password: ";
-		getline(cin, password);
-		cin.ignore();
+		getline(cin >> ws, password);
+		
 		if (IsPasswordCorrect(login, password)) {
 			cout << "Welcome Admin " << fullName << endl;
 			encrypt(login, password);
+			cout << "If you want to change your login or password (y/n) ?";
+			cin >> choice;
+			if (choice == 'y' || choice == 'Y') {
+				ChangeLogPass();
+				system("pause");
+				system("cls");
+			}
+			else {
+				system("pause");
+				system("cls");
+				return;
+			}
 		}
 		else {
 			cout << "Incorrect login or password!" << endl;
+			system("pause");
+			system("cls");
 			return authorization();
 		}
 	}
@@ -181,18 +189,18 @@ public:
 			string storedPassword;
 			file >> storedLogin >> storedPassword;
 			if (!file.fail()) {
-				return AdminMenu();
+				return authorization();
 			}
 			else {
 				return registration();
 			}
 			file.close();
 		}
+		system("pause");
 	}
 	~Admin()
 	{}
 };
-
 
 class AdminFeatures : public Admin
 {
@@ -209,15 +217,15 @@ public:
 		cout << "Enter the home adress of the user: " << homeAdress << endl;
 		cin.ignore();
 		getline(cin, homeAdress);
-		
+
 		cout << "Enter the phone number of the user: ";
-		cin>>phoneNumber;
+		cin >> phoneNumber;
 		cout << "Enter the login of the user: ";
 		cin >> usLogin;
 		cout << "Enter the password of the user: ";
 		cin >> usPass;
 		ofstream outFile(root + "userData.txt", ios::out | ios::app);
-		
+
 		if (outFile.is_open()) {
 			outFile << usLogin << endl;
 			outFile << usPass << endl;
@@ -227,7 +235,7 @@ public:
 			cout << "-------------------------------" << endl;
 			cout << "User added successfully!" << endl;
 		}
-			outFile.close();
+		outFile.close();
 	}
 	// udaleniye polzovatelya
 	void deleteUser() {
@@ -240,9 +248,9 @@ public:
 		vector<string> userEnter;
 		string fullName, homeAdress, phoneNumber, usLogin, usPass;
 		while (file >> fullName && file >> homeAdress && file >> phoneNumber && file >> usLogin && file >> usPass) {
-			cout << "User " << userEnter.size() + 1 <<':' << endl;
+			cout << "User " << userEnter.size() + 1 << ':' << endl;
 			cout << "Login: " << usLogin << endl;
-			cout << "Password: " << usPass <<endl;
+			cout << "Password: " << usPass << endl;
 			cout << "Full Name: " << fullName << endl;
 			cout << "Home adress: " << homeAdress << endl;
 			cout << "Phone number: " << phoneNumber << endl;
@@ -254,7 +262,7 @@ public:
 			return;
 		}
 		cout << "Select user for delete: ";
-		cin	>> ch;
+		cin >> ch;
 		if (ch >= 1 && ch <= userEnter.size()) {
 			userEnter.erase(userEnter.begin() + ch - 1);
 			ofstream fileOut(root + "userData.txt", ios::out | ios::trunc);
@@ -317,7 +325,6 @@ public:
 			}
 		}
 	}
-
 	// statistika 
 	void displayStatisResults() {
 		ifstream fileResult(root + "resultStudents.txt", ios::in);
@@ -340,12 +347,127 @@ public:
 		}
 	}
 
+	// dobavleniye voprosov i otvetov
+	void ManipulateTesting() {
+		// pokaz i dobavleniye chapterov
+		ifstream cpFile(root + "chapters.txt", ios::in);
+		char choice{};
+		if (cpFile.is_open()) {
+			string cp;
+			while (getline(cpFile, cp)) {
+				cout << cp << endl;
+			}
+			cpFile.close();
+		}
+		cout << "Do you want to add chapter(y/n)?: ";
+		cin >> choice;
+		if (choice == 'y' || choice == 'y') {
+			string newChapter;
+			cout << "Enter the chapter: ";
+			cin >> newChapter;
+			ofstream chapteFile(root + "chapters.txt", ios::out | ios::app);
+			if (chapteFile.is_open()) {
+				cout << '\n';
+				chapteFile << newChapter << endl;
+				chapteFile.close();
+			}
+		}
+		else {
+			return;
+		}
+
+		// dobavleniye voprosov i otvetov
+		char choice2{};
+		cout << "Do you want to add questions and answers (y/n)?: ";
+		cin >> choice2;
+
+		if (choice2 == 'y' || choice2 == 'Y') {
+			string newQuestions, newAnswers;
+			cout << "Enter the name of file for questions (.txt): ";
+			cin >> newQuestions;
+			cout << "Enter the name of file for answers (.txt): ";
+			cin >> newAnswers;
+			ofstream fileQ(root + newQuestions, ios::out | ios::app);
+			ofstream fileA(root + newAnswers, ios::out | ios::app);
+
+			if (fileQ.is_open() && fileA.is_open()) {
+				const int maxQuestions = 12;
+				//cout << "Enter up to " << maxQuestions << " questions. Press Enter after each question." << endl;
+				for (int i = 0; i < maxQuestions; ++i) {
+					string question, answer;
+					cout << "Question " << i + 1 << ": ";
+					getline(cin >> ws, question);
+					fileQ << question << endl;
+					cout << "Correct answer: ";
+					getline(cin >> ws, answer);
+					fileA << answer << endl;
+				}
+				cout << "Questions and answers added successfully!" << endl;
+				fileQ.close();
+				fileA.close();
+			}
+			else {
+				cout << "Unable to open the file for writing." << endl;
+			}
+		}
+		else {
+			return;
+		}
+	}
+
 	// osnovnoy menu
 	void CategoryMenu() {
-		AdminMenu();
-		// metod upravleniye polzovatelyami
-
+		CheckAdminAccount();
+		while (true) {
+			short choice;
+			cout << "Welcome Admin!" << endl;
+			cout << "1. Change your login or password." << endl;
+			cout << "2. Add users." << endl;
+			cout << "3. Delete users." << endl;
+			cout << "4. User modification." << endl;
+			cout << "5. Display statistics." << endl;
+			cout << "6. Add chapter and test." << endl;
+			cout << "7. Exit." << endl;
+			cout << "Enter your choice: ";
+			cin >> choice;  
+			system("pause");
+			system("cls");
+			switch (choice) {
+			case 1:
+				ChangeLogPass();
+				system("pause");
+				break;
+			case 2:
+				addUser();
+				system("pause");
+				break;
+			case 3:
+				deleteUser();
+				system("pause");
+				break;
+			case 4:
+				userModification();
+				system("pause");
+				break;
+			case 5:
+				displayStatisResults();
+				system("pause");
+				break;
+			case 6:
+				ManipulateTesting();
+				system("pause");
+				break;
+			case 7:
+				cout << "Goodbye!" << endl;
+				exit(0);
+			default:
+				cout << "Invalid choice. Please try again." << endl;
+				break;
+			}
+			system("pause");
+			system("cls");
+		}
 	}
-	
-
+	~AdminFeatures()
+	{}
 };

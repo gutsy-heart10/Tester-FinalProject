@@ -7,7 +7,6 @@
 using namespace std;
 
 string root = "../files/";
-
 class Person {
 protected:
 	string fullName;
@@ -32,7 +31,6 @@ public:
 		return phoneNumber;
 	}
 	virtual ~Person() = 0 {};
-	
 };
 
 void mainMenu() {
@@ -54,18 +52,15 @@ public:
 	virtual string getLogin() {
 		return login;
 	}
-
 	void registration() override {
 		cout << "Enter your fullname: ";
-		cin.ignore();
-		getline(cin, fullName);
+		getline(cin >> ws, fullName);
 		cout << "Enter your home adress: ";
-		getline(cin, homeAdress);
+		getline(cin >> ws, homeAdress);
 		cout << "Enter your phone number: ";
 		cin >> phoneNumber;
 		cout << "Registration was successful!!" << endl;
 	}
-
 	void regisLogin() override {
 		cout << "Registration your login and password ^^" << endl;
 		cout << "Login: ";	
@@ -81,7 +76,6 @@ public:
 		}
 		writeRegistrationFile();
 	}
-
 	void authorization() override {
 		cout << "Sign in" << endl;
 		cout << "Login: ";
@@ -100,7 +94,6 @@ public:
 			return authorization(); 
 		}
 	}
-
 	bool isLoginUnique(const string& newLogin) override {
 		ifstream file(root + "userData.txt", ios::in);
 		if (file.is_open()) {
@@ -120,7 +113,7 @@ public:
 		ifstream file(root + "userData.txt", ios::in);
 		if (file.is_open()) {
 			string login, password;
-			while (file >> login >> password) {
+			while (getline(file, login) && getline(file,password)) {
 				if (login == enteredLogin && password == enteredPass) {
 					file.close();
 					return true;
@@ -143,7 +136,6 @@ public:
 		cout << "Encrypt login: " << log << endl;
 		cout << "Encrypt password: " << pass << endl;
 	}
-
 	void writeRegistrationFile() {
 		ofstream file(root + "userData.txt", ios::out | ios::app);
 		if (file.is_open()) {
@@ -156,7 +148,6 @@ public:
 		}
 		file.close();
 	}
-	
 	~User()
 	{}
 };
@@ -192,17 +183,16 @@ private:
 	string root = "../files/";
 public:
 	OpenType() : currentQuestionIndex(""), savedTrueCount(0), interruptTest(false) {}
-
 	void displayTest() override {
 		int choice{}, choice2{}, menu{};
 		authorization();
 		system("pause");
 		system("cls");
-
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
 		cout << "2. View previous test results." << endl;
 		cout << "0. Exit your account." << endl;
+		cout << "---------------------------" << endl;
 		cin >> menu;
 		if (menu == 1) {
 			readChapterFile();
@@ -236,6 +226,10 @@ public:
 			}
 			system("pause");
 			break;
+		case 3:
+			readQuestionsFile("q_discrete mathematics.txt", "a_discrete mathematics.txt");
+			system("pause");
+			break;
 		default:
 			cout << "Incorrect selection. Choose 1 or 2 :)" << endl;
 			break;
@@ -243,13 +237,11 @@ public:
 		writeResultTestFile();
 		
 	}
-
 	void answersCheck() override {
 		const int totalQuestions = 12;
 		double percentage = static_cast<double>(trueCount) / totalQuestions * 100;
 		cout << "Percentage of Correct Answers: " << percentage << "%" << endl;
 	}
-
 	bool askToInterruptTest() {
 		char interruptChoice;
 		cout << "Do you want to interrupt the test? (y/n): ";
@@ -265,27 +257,33 @@ public:
 			return false;
 		}
 	}
-
 	bool hasSavedProgress() {
-		ifstream progressFile(root + "progress.txt", ios::in);
+		ifstream progressFile(root + "interrupt.dat", ios::in);
 		return progressFile.good();
 	}
-
+	void skipLines(ifstream& file, int count) {
+		for (int i = 0; i < count; ++i) {
+			string dummyString;
+			getline(file, dummyString);
+		}
+	}
 	void readQuestionsFile(string fileQuestions, string fileAnswers) {
 		ifstream FileQues(root + fileQuestions, ios::in);
 		ifstream FileAnsw(root + fileAnswers, ios::in);
 		bool inter{};
+		if (savedTrueCount > 0) {
+			skipLines(FileQues, savedTrueCount);
+			skipLines(FileAnsw, savedTrueCount);
+		}
+
 		if (FileQues.is_open() && FileAnsw.is_open()) {
 			string question, answer;
 			int falseCount{};
 			for (; getline(FileQues, question) && getline(FileAnsw, answer);) {
-				
 				cout << question << endl;
 				string userAnswer;
-
 				cout << "Your Answer: ";
-				getline(cin, userAnswer);
-
+				getline(cin >> ws, userAnswer);
 				if (_strcmpi(userAnswer.c_str(), answer.c_str()) == 0) {
 					cout << "Correct Answer!" << endl;
 					savedTrueCount++;
@@ -295,12 +293,19 @@ public:
 					cout << "Incorrect Answer. Correct Answer: " << answer << endl;
 					falseCount++;
 				}
-				
 				cout << "-------------------" << endl;
 				inter = askToInterruptTest();
 				if (inter) break;
 			}
-			if (inter) return mainMenu();
+			if (inter) {
+				writeResultTestFile();
+				FileQues.close();
+				FileAnsw.close();
+				system("pause");
+				system("cls");
+				return;
+			}
+
 			cout << "Total Answers :) " << endl;
 			cout << "Correct answers: " << trueCount << endl;
 			cout << "Incorrect answers: " << falseCount << endl;
@@ -313,9 +318,7 @@ public:
 		else {
 			cout << "Unable to open the files." << endl;
 		}
-
 	}
-
 	void readChapterFile() {
 		ifstream fileChapter(root + "chapters.txt", ios::in);
 		if (fileChapter.is_open()) {
@@ -329,7 +332,6 @@ public:
 			cout << "Unable to open the file." << endl;
 		}
 	}
-
 	void writeResultTestFile() {
 		ofstream fileResult(root + "resultStudents.txt", ios::out | ios::app);
 		if (fileResult.is_open()) {
@@ -343,7 +345,6 @@ public:
 			cout << "Error: Unable to open the file for writing." << endl;
 		}
 	}
-
 	void readResultTestFile() {
 		ifstream fileResult(root + "resultStudents.txt", ios::in);
 		if (fileResult.is_open()) {
@@ -364,7 +365,6 @@ public:
 			return;
 		}
 	}
-
 	bool writeInterruptTest() {
 		ofstream file(root + "interrupt.dat", ios::out | ios::trunc);
 		if (file.is_open()) {
@@ -378,7 +378,6 @@ public:
 		}
 		return true;
 	}
-
 	bool readInterruptTest() {
 		ifstream file(root + "interrupt.dat", ios::in);
 		if (file.is_open()) {
@@ -387,13 +386,13 @@ public:
 			file.close();
 			cout << "Test progress loaded successfully." << endl;
 			return true;
+			system("cls");
 		}
 		else {
 			cout << "Error: Unable to open the file for reading." << endl;
 			return false;
 		}
 	}
-
 	void testMenu() {
 		cout << "---------------------------" << endl;
 		cout << "1. Take the test." << endl;
@@ -404,12 +403,13 @@ public:
 		}
 		displayTest();
 	}
+	~OpenType()
+	{}
 };
 
 void MenuMain(OpenType& t) {
 	while (true) {
 		mainMenu();
-
 		int choice;
 		cin >> choice;
 		cin.ignore();
@@ -424,8 +424,8 @@ void MenuMain(OpenType& t) {
 			system("cls");
 			break;
 		case 2:
-			
 			t.displayTest();
+			system("pause");
 			break;
 		case 0:
 			cout << "Goodbye!" << endl;

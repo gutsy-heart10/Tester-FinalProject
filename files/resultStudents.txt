@@ -1,72 +1,40 @@
 Results:
-Login: Hvutz44
-Test: 2.Quiz
-Mark: 11
-Results:
-Login: Hvutz44
-Test: 2.Quiz
-Mark: 11
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 12
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 12
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 12
-Results:
-Login: Hvutz44
-Test: 2.Quiz
-Mark: 12
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 6
-Results:
-Login: Nvsbet
-Test: 2.Quiz
-Mark: 6
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 10
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 10
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 0
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 0
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 0
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 1
-Results:
-Login: Nvsbepp
-Test: 2.Quiz
-Mark: 1
-Results:
-Login: Nvsbep
-Test: 2.Quiz
-Mark: 1
-Results:
-Login: Nvsbep
-Test: 2.Quiz
+Login: Nvsbe
+Test: 
 Mark: 1
 Results:
 Login: Nvsbe
-Test: 2.Quiz
+Test: 
+Mark: 1
+Results:
+Login: Obejs
+Test: 
+Mark: 2
+Results:
+Login: Obejs
+Test: 
+Mark: 2
+Results:
+Login: Obejs
+Test: 
+Mark: 1
+Results:
+Login: Obejs
+Test: 
+Mark: 1
+Results:
+Login: Obejs
+Test: 
+Mark: 2
+Results:
+Login: Obejs
+Test: 
+Mark: 2
+Results:
+Login: Obejs
+Test: 
+Mark: 1
+Results:
+Login: Obejs
+Test: 
 Mark: 1
