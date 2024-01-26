@@ -56,7 +56,7 @@ public:
 		if (IsPasswordCorrect(login, password)) {
 			cout << "Welcome Admin " << fullName << endl;
 			encrypt(login, password);
-			cout << "If you want to change your login or password (y/n) ?";
+			cout << "If you want to change your login or password (y/n)?: ";
 			cin >> choice;
 			if (choice == 'y' || choice == 'Y') {
 				ChangeLogPass();

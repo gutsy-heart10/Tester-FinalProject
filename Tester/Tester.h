@@ -212,8 +212,8 @@ public:
 			system("pause");
 			break;
 		case 2:
-			cout << "1. Quiz city names." << endl;
-			cout << "2. Quiz car brand names." << endl;
+			cout << "Quiz city names." << endl;
+			cout << "Quiz car brand names." << endl;
 			cout << "Select category :)";
 			cin >> choice2;
 			cin.ignore();
@@ -251,6 +251,7 @@ public:
 			writeInterruptTest();
 			hasSavedProgress();
 			return true;
+			system("cls");
 		}
 		else {
 			interruptTest = false;
