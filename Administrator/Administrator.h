@@ -327,23 +327,99 @@ public:
 	}
 	// statistika 
 	void displayStatisResults() {
-		ifstream fileResult(root + "resultStudents.txt", ios::in);
-		if (fileResult.is_open()) {
-			string line;
-			while (getline(fileResult, line)) {
-				if (line.find("Login: " + login) != string::npos) {
-					cout << line << endl;
-					while (getline(fileResult, line) && line != "") {
+		int ch{};
+		string line, log;
+		cout << "1. Show statistic by users." << endl;
+		cout << "2. Show statistic by chapter." << endl;
+		cout << "3. Show all statistic information." << endl;
+		cout << "Select choice: ";
+		cin >> ch;
+
+		switch (ch) {
+		case 1:
+			// Show statistic by users
+		{
+			cout << "Enter the login of user: ";
+			cin >> log;  // Fix: use the correct variable name 'log'
+			ifstream fileResult(root + "resultStudents.txt", ios::in);
+			if (fileResult.is_open()) {
+				while (getline(fileResult, line)) {
+					if (line.find("Login: " + log) != string::npos) {  // Fix: use the correct variable name 'log'
 						cout << line << endl;
+						while (getline(fileResult, line) && line != "") {
+							cout << line << endl;
+						}
+						break;
 					}
-					break;
 				}
+				fileResult.close();
 			}
-			fileResult.close();
+			else {
+				cout << "Error: Unable to open the file." << endl;
+				return;
+			}
 		}
-		else {
-			cout << "Error: Unable to open the file." << endl;
-			return;
+		break;
+		case 2:
+			// Show statistic by chapter
+		{
+			ifstream fileChapter(root + "chapters.txt", ios::in);
+			if (fileChapter.is_open()) {
+				string chapter;
+				while (getline(fileChapter, chapter)) {
+					cout << chapter << endl;
+
+					ifstream fileResult(root + "resultStudents.txt", ios::in);
+					if (fileResult.is_open()) {
+						bool foundChapter = false;
+						while (getline(fileResult, line)) {
+							if (line.find("Chapter: " + chapter) != string::npos) {
+								foundChapter = true;
+								cout << line << endl;
+								while (getline(fileResult, line) && line != "") {
+									cout << line << endl;
+								}
+								break;
+							}
+						}
+						fileResult.close();
+
+						if (!foundChapter) {
+							cout << "No statistics found for this chapter." << endl;
+						}
+					}
+					else {
+						cout << "Error: Unable to open the file." << endl;
+						return;
+					}
+					cout << "--------------------------" << endl;
+				}
+				fileChapter.close();
+			}
+			else {
+				cout << "Error: Unable to open the file." << endl;
+				return;
+			}
+		}
+		break;
+		case 3:
+			// Show all statistic information
+		{
+			ifstream fileResult(root + "resultStudents.txt", ios::in);
+			if (fileResult.is_open()) {
+				while (getline(fileResult, line)) {
+					cout << line << endl;
+				}
+				fileResult.close();
+			}
+			else {
+				cout << "Error: Unable to open the file." << endl;
+				return;
+			}
+		}
+		break;
+		default:
+			cout << "Invalid choice." << endl;
 		}
 	}
 
