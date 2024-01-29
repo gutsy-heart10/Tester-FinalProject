@@ -337,14 +337,13 @@ public:
 
 		switch (ch) {
 		case 1:
-			// Show statistic by users
 		{
 			cout << "Enter the login of user: ";
-			cin >> log;  // Fix: use the correct variable name 'log'
+			cin >> log;  
 			ifstream fileResult(root + "resultStudents.txt", ios::in);
 			if (fileResult.is_open()) {
 				while (getline(fileResult, line)) {
-					if (line.find("Login: " + log) != string::npos) {  // Fix: use the correct variable name 'log'
+					if (line.find("Login: " + log) != string::npos) {  
 						cout << line << endl;
 						while (getline(fileResult, line) && line != "") {
 							cout << line << endl;
@@ -361,14 +360,12 @@ public:
 		}
 		break;
 		case 2:
-			// Show statistic by chapter
 		{
 			ifstream fileChapter(root + "chapters.txt", ios::in);
 			if (fileChapter.is_open()) {
 				string chapter;
 				while (getline(fileChapter, chapter)) {
 					cout << chapter << endl;
-
 					ifstream fileResult(root + "resultStudents.txt", ios::in);
 					if (fileResult.is_open()) {
 						bool foundChapter = false;
@@ -383,7 +380,6 @@ public:
 							}
 						}
 						fileResult.close();
-
 						if (!foundChapter) {
 							cout << "No statistics found for this chapter." << endl;
 						}
@@ -403,7 +399,6 @@ public:
 		}
 		break;
 		case 3:
-			// Show all statistic information
 		{
 			ifstream fileResult(root + "resultStudents.txt", ios::in);
 			if (fileResult.is_open()) {
@@ -427,7 +422,7 @@ public:
 	void ManipulateTesting() {
 		// pokaz i dobavleniye chapterov
 		ifstream cpFile(root + "chapters.txt", ios::in);
-		char choice{};
+		char ch{};
 		if (cpFile.is_open()) {
 			string cp;
 			while (getline(cpFile, cp)) {
@@ -436,8 +431,8 @@ public:
 			cpFile.close();
 		}
 		cout << "Do you want to add chapter(y/n)?: ";
-		cin >> choice;
-		if (choice == 'y' || choice == 'y') {
+		cin >> ch;
+		if (ch == 'y' || ch == 'y') {
 			string newChapter;
 			cout << "Enter the chapter: ";
 			cin >> newChapter;
