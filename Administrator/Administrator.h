@@ -198,8 +198,7 @@ public:
 		}
 		system("pause");
 	}
-	~Admin()
-	{}
+	~Admin() override {}
 };
 
 class AdminFeatures : public Admin
@@ -539,6 +538,5 @@ public:
 			system("cls");
 		}
 	}
-	~AdminFeatures()
-	{}
+	~AdminFeatures() override {}
 };

@@ -163,8 +163,7 @@ public:
 		}
 		file.close();
 	}
-	~User()
-	{}
+	~User() override {};
 };
 
 class Questions
@@ -430,8 +429,7 @@ public:
 		}
 		displayTest();
 	}
-	~OpenType()
-	{}
+	~OpenType() override {};
 };
 
 void MenuMain(OpenType& t) {
