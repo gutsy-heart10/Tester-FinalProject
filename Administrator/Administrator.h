@@ -168,11 +168,10 @@ public:
 		filePass.close();
 		ofstream fileAdd(root + "userData.txt", ios::out | ios::app);
 		if (fileAdd.is_open()) {
-			fileAdd << "Super Admin" << endl;
-			fileAdd << "Full Name: " << fullName << endl;
-			fileAdd << "E-mail: " << email << endl;
-			fileAdd << "Login: " << login << endl;
-			fileAdd << "Password: " <<password << endl;
+			fileAdd << login << endl;
+			fileAdd <<password << endl;
+			fileAdd << fullName << endl;
+			fileAdd << email << endl;
 		}
 	}
 	// chteniye log i pass
