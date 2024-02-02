@@ -18,7 +18,7 @@ public:
 	virtual void registration() = 0;
 	virtual void regisLogin() = 0;
 	virtual bool isLoginUnique(const string& newLogin) = 0;
-	virtual bool isPasswordCorrect(const string& login, const string& enteredPass) = 0;
+	virtual bool isPasswordCorrect( const string& login, const string& enteredPass) = 0;
 	virtual void authorization() = 0;
 	virtual void encrypt(string& log, string pass) = 0;
 	virtual void decrypt(string& log, string& pass) = 0;
@@ -53,6 +53,22 @@ public:
 	virtual string getLogin() {
 		return login;
 	}
+	bool isLoginUnique(const string& newLogin) override {
+		ifstream file(root + "userData.txt", ios::in);
+		if (file.is_open()) {
+			string log,pass;
+			while (file >> log >> pass) {
+				if (log == newLogin) {
+					file.close();
+					return false;
+				}
+			}
+
+			file.close();
+		}
+		return true;  
+	}
+	
 	void registration() override {
 		cout << "Enter your fullname: ";
 		getline(cin >> ws, fullName);
@@ -75,8 +91,10 @@ public:
 			cin >> password;
 			cout << "Welcome! " << login << endl;
 		}
+
 		writeRegistrationFile();
 	}
+	
 	void authorization() override {
 		cout << "Sign in" << endl;
 		cout << "Login: ";
@@ -87,7 +105,6 @@ public:
 		if (isPasswordCorrect(login, password)) {
 			cout << "Welcome " << login << endl;
 			encrypt(login, password);
-			decrypt(login, password);
 		}
 		else {
 			cout << "Incorrect login or password!" << endl;
@@ -96,27 +113,20 @@ public:
 			return authorization(); 
 		}
 	}
-	bool isLoginUnique(const string& newLogin) override {
-		ifstream file(root + "userData.txt", ios::in);
-		if (file.is_open()) {
-			string log,pass;
-			while (file >> log >> pass) {
-				if (log == newLogin) {
-					file.close();
-					return false;
-				}
-			}
-
-			file.close();
-		}
-		return true;  
-	}
 	bool isPasswordCorrect(const string& enteredLogin, const string& enteredPass) override {
 		ifstream file(root + "userData.txt", ios::in);
 		if (file.is_open()) {
-			string login, password;
-			while (getline(file, login) && getline(file,password)) {
-				if (login == enteredLogin && password == enteredPass) {
+			string encryptedLogin, encryptedPassword;
+			while (file >> encryptedLogin >> encryptedPassword) {
+				string decryptedLogin = encryptedLogin;
+				string decryptedPassword = encryptedPassword;
+				for (char& ch : decryptedLogin) {
+					ch = static_cast<char>(ch - 1);
+				}
+				for (char& ch : decryptedPassword) {
+					ch = static_cast<char>(ch - 1);
+				}
+				if (decryptedLogin == enteredLogin && decryptedPassword == enteredPass) {
 					file.close();
 					return true;
 				}
@@ -125,7 +135,6 @@ public:
 		}
 		return false;
 	}
-
 
 	void encrypt(string& log, string pass) override {
 		for (char& ch : login) {
@@ -147,19 +156,24 @@ public:
 				ch = static_cast<char>(ch - 1);
 			}
 		}
-		cout << "Decrypt login: " << log << endl;
-		cout << "Decrypt password: " << pass << endl;
-	}
 
+	}
 	void writeRegistrationFile() {
 		ofstream file(root + "userData.txt", ios::out | ios::app);
 		if (file.is_open()) {
-			file <<login << endl;
+			for (char& ch : login) {
+				ch = static_cast<char>(ch + 1);
+			}
+			for (char& ch : password) {
+				ch = static_cast<char>(ch + 1);
+				
+			}
+			file << login << endl;
 			file << password << endl;
-			file <<fullName << endl;
+			file << fullName << endl;
 			file << homeAdress << endl;
 			file << phoneNumber << endl;
-			file << "-----------------------------------" << endl;
+			file << "\n";
 		}
 		file.close();
 	}

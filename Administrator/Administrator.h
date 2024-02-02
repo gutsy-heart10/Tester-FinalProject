@@ -18,7 +18,7 @@ public:
 	{}
 	virtual void registration() = 0;
 	virtual void authorization() = 0;
-	virtual void encrypt(string& log, string pass) = 0;
+	virtual void encrypt(string& log, string& pass) = 0;
 	virtual ~InfoAdmin() = 0 {};
 };
 
@@ -31,6 +31,25 @@ public:
 		CheckAdminAccount();
 		registration();
 	};
+	// smena log i pass
+	void ChangeLogPass() {
+		readAdminLogPass();
+		string log, pass;
+		cout << "Enter new login: ";
+		cin >> log;
+		cout << "Enter new password: ";
+		cin >> pass;
+		updateData(log, pass);
+	}
+	void updateData(const string& newLog, const string& newPass) {
+		writeAdminData(newLog);
+		writeAdminLogPass(newLog, newPass);
+	}
+
+	// metod
+	void checkWork() {
+		return CheckAdminAccount();
+	}
 
 	void registration() override {
 		cout << "Enter your full name: ";
@@ -41,10 +60,12 @@ public:
 		cin >> login;
 		cout << "Enter your password: ";
 		cin >> password;
+		encrypt(login, password);
 		writeAdminData(login);
 		writeAdminLogPass(login, password);
 		authorization();
 	}
+
 	void authorization() override {
 		char choice{};
 		cout << "Login: ";
@@ -77,55 +98,56 @@ public:
 		}
 	}
 
-	// metod
-	void checkWork() {
-		return CheckAdminAccount();
-	}
 	// proverka parol
-	bool IsPasswordCorrect(const string& login, const string& enteredPass) {
+	bool IsPasswordCorrect(const string& enteredLogin, const string& enteredPass) {
 		ifstream fileLog(root + "adminLog.dat", ios::in);
 		ifstream filePass(root + "adminPass.dat", ios::in);
+
 		if (fileLog.is_open() && filePass.is_open()) {
-			string existingLogin;
-			string existingPass;
-			while (fileLog >> existingLogin && filePass >> existingPass)
-			{
-				if (login == existingLogin && enteredPass == existingPass) {
+			string encryptedLogin, encryptedPassword;
+
+			while (fileLog >> encryptedLogin && filePass >> encryptedPassword) {
+				// Decrypt stored login and password for comparison
+				string decryptedLogin = encryptedLogin;
+				string decryptedPassword = encryptedPassword;
+				for (char& ch : decryptedLogin) {
+					ch = static_cast<char>(ch - 1);
+				}
+				for (char& ch : decryptedPassword) {
+					ch = static_cast<char>(ch - 1);
+				}
+
+				if (decryptedLogin == enteredLogin && decryptedPassword == enteredPass) {
 					fileLog.close();
 					filePass.close();
 					return true;
 				}
 			}
+
 			fileLog.close();
 			filePass.close();
 		}
+
 		return false;
 	}
-	// smena log i pass
-	void ChangeLogPass() {
-		readAdminLogPass();
-		string log, pass;
-		cout << "Enter new login: ";
-		cin >> log;
-		cout << "Enter new password: ";
-		cin >> pass;
-		updateData(log, pass);
-	}
-	void updateData(const string& newLog, const string& newPass) {
-		writeAdminData(newLog);
-		writeAdminLogPass(newLog, newPass);
-	}
-	// shifr
-	void encrypt(string& log, string pass) override {
-		for (char& ch : login) {
+
+	// encrypt
+	void encrypt(string& log, string& pass) override{
+		for (char& ch : log) {
 			ch = static_cast<char>(ch + 1);
 		}
 		for (char& ch : pass) {
 			ch = static_cast<char>(ch + 1);
-			ch = '*';
 		}
-		cout << "Encrypt login: " << log << endl;
-		cout << "Encrypt password: " << pass << endl;
+	}
+	// decrypt
+	void decrypt(string& log, string pass) {
+		for (char& ch : log) {
+			ch = static_cast<char>(ch - 1);
+		}
+		for (char& ch : pass) {
+			ch = static_cast<char>(ch - 1);
+		}
 	}
 	// zapis vsex dannix
 	void writeAdminData(const string& login) {
@@ -156,7 +178,7 @@ public:
 	void writeAdminLogPass(const string& login, const string& password) {
 		ofstream fileLog(root + "adminLog.dat", ios::out | ios::app);
 		ofstream filePass(root + "adminPass.dat", ios::out | ios::app);
-		if (fileLog.is_open() && filePass.is_open()) {
+		if (fileLog.is_open() && filePass.is_open()) {			
 			fileLog << "-----------------------------------" << endl;
 			fileLog << "Login: " << login << endl;
 			fileLog << "-----------------------------------" << endl;
@@ -217,28 +239,25 @@ public:
 	// dobavleniye polzovatelya
 	void addUser() {
 		string fullName, homeAdress, phoneNumber, usLogin, usPass;
-		cout << "Enter the full name of the user: ";
-		cin.ignore();
-		getline(cin, fullName);
-		cout << "Enter the home adress of the user: " << homeAdress << endl;
-		cin.ignore();
-		getline(cin, homeAdress);
-
+		cout << "Enter the full name of the user: ";		
+		getline(cin>>ws, fullName);
+		cout << "Enter the home adress of the user: " << homeAdress << endl;	
+		getline(cin>>ws, homeAdress);
 		cout << "Enter the phone number of the user: ";
 		cin >> phoneNumber;
 		cout << "Enter the login of the user: ";
 		cin >> usLogin;
 		cout << "Enter the password of the user: ";
 		cin >> usPass;
+		
 		ofstream outFile(root + "userData.txt", ios::out | ios::app);
-
+		encrypt(usLogin, usPass);
 		if (outFile.is_open()) {
 			outFile << usLogin << endl;
 			outFile << usPass << endl;
 			outFile << fullName << endl;
 			outFile << homeAdress << endl;
 			outFile << phoneNumber << endl;
-			cout << "-------------------------------" << endl;
 			cout << "User added successfully!" << endl;
 		}
 		outFile.close();
@@ -296,14 +315,14 @@ public:
 		}
 		vector<string> userEnter;
 		string fullName, homeAdress, phoneNumber, usLogin, usPass;
-		while (file >> fullName && file >> homeAdress && file >> phoneNumber && file >> usLogin && file >> usPass) {
+		while (file >> usLogin && file >> usPass && file >> fullName && file >> homeAdress && file >> phoneNumber) {
 			cout << "User " << userEnter.size() + 1 << ':' << endl;
 			cout << "Login: " << usLogin << endl;
 			cout << "Password: " << usPass << endl;
 			cout << "Full Name: " << fullName << endl;
 			cout << "Home adress: " << homeAdress << endl;
 			cout << "Phone number: " << phoneNumber << endl;
-			userEnter.push_back(fullName + " " + homeAdress + " " + phoneNumber + " " + usLogin + " " + usPass);
+			userEnter.push_back(usLogin + "\n" + usPass + "\n" + fullName + "\n" + homeAdress + "\n" + phoneNumber);
 		}
 		file.close();
 		if (userEnter.empty()) {
@@ -318,8 +337,8 @@ public:
 			cout << "Enter the new password of the user: ";
 			cin >> usPass;
 
-			userEnter[ch - 1] = usLogin + " " + usPass + fullName + " " + homeAdress + " " + phoneNumber;
-
+			encrypt(usLogin, usPass);
+			userEnter[ch - 1] = usLogin + "\n" + usPass + "\n" + fullName + "\n" + homeAdress + "\n" + phoneNumber;
 			ofstream outFile(root + "userData.txt", ios::out | ios::trunc);
 
 			if (outFile.is_open()) {

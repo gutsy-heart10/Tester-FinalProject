@@ -1,10 +1,5 @@
 Results:
-Login: Eren
+Login: Gutsy
 Chapter: Quiz: City names.
-Mark: 12
------------------------------
-Results:
-Login: Murad
-Chapter: Quiz: Cars brand names.
-Mark: 9
+Mark: 3
 -----------------------------
